@@ -1,131 +1,495 @@
-# 2019-03-10 18:17:37
-#---------------------------------------------------#
-## 配置文件需要放置在 $HOME/.config/clash/config.yml
-## 
-## 如果您不知道如何操作，请参阅 SS-Rule-Snippet 的 Wiki： https://github.com/Hackl0us/SS-Rule-Snippet/wiki/clash(X)
-#---------------------------------------------------#
-
-# HTTP 代理端口
 port: 7890
-
-# SOCKS5 代理端口
 socks-port: 7891
-
-# Linux 和 macOS 的 redir 代理端口 (如需使用此功能，请取消注释)
-# redir-port: 7892
-
-# 允许局域网的连接（可用来共享代理）
-allow-lan: false
-
-# 规则模式：Rule（规则） / Global（全局代理）/ Direct（全局直连）
+allow-lan: true
 mode: Rule
-
-# 设置日志输出级别 (默认级别：silent，即不输出任何内容，以避免因日志内容过大而导致程序内存溢出）。
-# 5 个级别：silent / info / warning / error / debug。级别越高日志输出量越大，越倾向于调试，若需要请自行开启。
-log-level: silent
-
-# clash 的 RESTful API
+log-level: info
 external-controller: 127.0.0.1:9090
-
-# 您可以将静态网页资源（如 clash-dashboard）放置在一个目录中，clash 将会服务于 `${API}/ui`
-# 参数应填写配置目录的相对路径或绝对路径。
-# external-ui: folder
-
-# RESTful API 的口令 (可选)
-secret: ""
-
-dns:
-  enable: true
-  ipv6: false
-  # listen: 0.0.0.0:53
-  # enhanced-mode: redir-host
-  nameserver:
-     - 1.2.4.8
-     - 114.114.114.114
-     - 223.5.5.5
-     - tls://dns.rubyfish.cn:853
-     
-  fallback: # 与 nameserver 内的服务器列表同时发起请求，当规则符合 GEOIP 在 CN 以外时，fallback 列表内的域名服务器生效。
-     - tls://dns.rubyfish.cn:853
-     - tls://dns.google
-
-# clash DNS 请求逻辑：
-# (1) 当访问一个域名时， nameserver 与 fallback 列表内的所有服务器并发请求，得到域名对应的 IP 地址。
-# (2) clash 将选取 nameserver 列表内，解析最快的结果。
-# (3) 若解析结果中，IP 地址属于 国外，那么 clash 将选择 fallback 列表内，解析最快的结果。
-#
-# 因此，我在 nameserver 和 fallback 内都放置了无污染、解析速度较快的国内 DNS 服务器，以达到最快的解析速度。
-# 但是 fallback 列表内服务器会用在解析境外网站，为了结果绝对无污染，我仅保留了支持 DoT/DoH 的两个服务器。
-# 
-# 注意：
-# (1) 如果您为了确保 DNS 解析结果无污染，请仅保留列表内以 tls:// 开头的 DNS 服务器，但是通常对于国内没有太大必要。
-# (2) 如果您不在乎可能解析到污染的结果，更加追求速度。请将 nameserver 列表的服务器插入至 fallback 列表内，并移除重复项。
-
-Proxy:
-
-# shadowsocks
-# 所支持的加密方式与 go-shadowsocks2 保持一致
-# 支持加密方式： AEAD_AES_128_GCM AEAD_AES_192_GCM AEAD_AES_256_GCM AEAD_CHACHA20_POLY1305 AES-128-CTR AES-192-CTR AES-256-CTR AES-128-CFB AES-192-CFB AES-256-CFB CHACHA20-IETF XCHACHA20 
-# clash 额外支持 chacha20 rc4-md5 xchacha20-ietf-poly1305 加密方式
-
-#  http
-- { name: "UnblockNeteaseMusic_Local", type: http, server: 192.168.1.28, port: 8080 }
-
-- { name: "UnblockNeteaseMusic_Network", type: http, server: dalala.ga, port: 4567 }
-
-Proxy Group:
-# url-test 网易云音乐
-- { name: "UnblockNeteaseMusic", type: url-test, proxies: ["UnblockNeteaseMusic_Local", "UnblockNeteaseMusic_Network"], url: "http://www.gstatic.com/generate_204", interval: 60 }
-
-Rule:
-# 自定义规则
-## 您可以在此处插入您补充的自定义规则
-- DOMAIN-SUFFIX,music.163.com,UnblockNeteaseMusic
-- DOMAIN-SUFFIX,interface.music.163.com,UnblockNeteaseMusic
-- DOMAIN-SUFFIX,interface3.music.163.com,UnblockNeteaseMusic
-- DOMAIN-SUFFIX,apm.music.163.com,UnblockNeteaseMusic
-- DOMAIN-SUFFIX,apm3.music.163.com,UnblockNeteaseMusic
-- DOMAIN-SUFFIX,man.netease.com,UnblockNeteaseMusic
-- DOMAIN-SUFFIX,api.iplay.163.com,UnblockNeteaseMusic
-- IP-CIDR,39.105.63.80/32,UnblockNeteaseMusic
-- IP-CIDR,45.254.48.1/32,UnblockNeteaseMusic
-- IP-CIDR,47.100.127.239/32,UnblockNeteaseMusic
-- IP-CIDR,59.111.160.195/32,UnblockNeteaseMusic
-- IP-CIDR,59.111.160.197/32,UnblockNeteaseMusic
-- IP-CIDR,59.111.181.35/32,UnblockNeteaseMusic
-- IP-CIDR,59.111.181.38/32,UnblockNeteaseMusic
-- IP-CIDR,59.111.181.60/32,UnblockNeteaseMusic
-- IP-CIDR,101.71.154.241/32,UnblockNeteaseMusic
-- IP-CIDR,103.126.92.132/32,UnblockNeteaseMusic
-- IP-CIDR,103.126.92.133/32,UnblockNeteaseMusic
-- IP-CIDR,112.13.119.17/32,UnblockNeteaseMusic
-- IP-CIDR,112.13.122.1/32,UnblockNeteaseMusic
-- IP-CIDR,115.236.118.33/32,UnblockNeteaseMusic
-- IP-CIDR,115.236.121.1/32,UnblockNeteaseMusic
-- IP-CIDR,118.24.63.156/32,UnblockNeteaseMusic
-- IP-CIDR,193.112.159.225/32,UnblockNeteaseMusic
-- IP-CIDR,223.252.199.66/32,UnblockNeteaseMusic
-- IP-CIDR,223.252.199.67/32,UnblockNeteaseMusic
-
-- DOMAIN-SUFFIX,ac.dun.163yun.com,UnblockNeteaseMusic
-- DOMAIN-SUFFIX,mr.da.netease.com,UnblockNeteaseMusic
-- DOMAIN-SUFFIX,crash.163.com,UnblockNeteaseMusic
-- IP-CIDR,101.71.154.241/32,UnblockNeteaseMusic
-
-- DOMAIN-SUFFIX,music.126.net,UnblockNeteaseMusic
-#- IP-CIDR,59.111.21.13/32,UnblockNeteaseMusic
-#- IP-CIDR,59.111.21.14/32,UnblockNeteaseMusic
-#- IP-CIDR,59.111.179.213/32,UnblockNeteaseMusic
-
-# LAN
-- DOMAIN-SUFFIX,local,DIRECT
-- IP-CIDR,127.0.0.0/8,DIRECT
-- IP-CIDR,172.16.0.0/12,DIRECT
-- IP-CIDR,192.168.0.0/16,DIRECT
-- IP-CIDR,10.0.0.0/8,DIRECT
-- IP-CIDR,17.0.0.0/8,DIRECT
-- IP-CIDR,100.64.0.0/10,DIRECT
-
-# 最终规则
-- GEOIP,CN,DIRECT
-- MATCH,DIRECT
+proxies:
+  - {name: 网易云解锁, server: dalala.ga, port: 4567, type: http }
+  - {name: 🇨🇳 【隧道】台湾, server: hn.tlss.bid, port: 50798, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇨🇳 【隧道】台湾GZ, server: gz.tlss.bid, port: 50798, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇨🇳 【隧道】台湾ZS, server: zs.tlss.bid, port: 50798, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇸🇬 【隧道】新加坡 Netflix, server: hn.tlss.bid, port: 50799, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇸🇬 【隧道】新加坡ZS, server: zs.tlss.bid, port: 50799, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇯🇵 【隧道】日本(Google Scholar), server: hn.tlss.bid, port: 50803, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇯🇵 【隧道】日本(原生 解锁霓虹本土各网站), server: hn.tlss.bid, port: 50853, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇯🇵 【隧道】日本GZ, server: gz.tlss.bid, port: 50803, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇯🇵 【隧道】日本ZS, server: zs.tlss.bid, port: 50803, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇺🇲 【隧道】美国, server: hn.tlss.bid, port: 50802, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】美国-HK-ZS, server: zs.tlss.bid, port: 50802, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇰🇷 【隧道】韩国, server: hn.tlss.bid, port: 50805, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇰🇷 【隧道】韩国GZ, server: gz.tlss.bid, port: 50805, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇰🇷 【隧道】韩国ZS, server: zs.tlss.bid, port: 50805, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】香港 ALL IN ONE, server: hn.tlss.bid, port: 50800, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】香港 HKT, server: hn.tlss.bid, port: 50810, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】香港GZ HKT, server: gz.tlss.bid, port: 50810, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】香港SH 5Mbps, server: sh.tlss.bid, port: 50800, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】香港SZ 5Mbps, server: sz.tlss.bid, port: 50800, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】香港ZS, server: zs.tlss.bid, port: 50800, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】香港ZS HKT, server: zs.tlss.bid, port: 50810, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+  - {name: 🇭🇰 【隧道】香港ZSA, server: zs.tlss.bid, port: 50801, type: ssr, cipher: aes-256-cfb, password: singleport, protocol: auth_aes128_sha1, obfs: tls1.2_ticket_auth, protocol-param: 29821:4ID1xW, obfs-param: 81094}
+proxy-groups:
+  - name: Proxies
+    type: select
+    proxies:
+      - Fallback
+      - HK
+      - SG
+      - JP
+      - US
+      - TW
+      - 🇨🇳 【隧道】台湾
+      - 🇨🇳 【隧道】台湾GZ
+      - 🇨🇳 【隧道】台湾ZS
+      - 🇸🇬 【隧道】新加坡 Netflix
+      - 🇸🇬 【隧道】新加坡ZS
+      - 🇯🇵 【隧道】日本(Google Scholar)
+      - 🇯🇵 【隧道】日本(原生 解锁霓虹本土各网站)
+      - 🇯🇵 【隧道】日本GZ
+      - 🇯🇵 【隧道】日本ZS
+      - 🇺🇲 【隧道】美国
+      - 🇭🇰 【隧道】美国-HK-ZS
+      - 🇰🇷 【隧道】韩国
+      - 🇰🇷 【隧道】韩国GZ
+      - 🇰🇷 【隧道】韩国ZS
+      - 🇭🇰 【隧道】香港 ALL IN ONE
+      - 🇭🇰 【隧道】香港 HKT
+      - 🇭🇰 【隧道】香港GZ HKT
+      - 🇭🇰 【隧道】香港SH 5Mbps
+      - 🇭🇰 【隧道】香港SZ 5Mbps
+      - 🇭🇰 【隧道】香港ZS
+      - 🇭🇰 【隧道】香港ZS HKT
+      - 🇭🇰 【隧道】香港ZSA
+  - name: Apple
+    type: select
+    proxies:
+      - DIRECT
+      - Proxies
+  - name: MicroSoft
+    type: select
+    proxies:
+      - DIRECT
+      - Proxies
+  - name: Telegram
+    type: select
+    proxies:
+      - Proxies
+      - HK
+      - SG
+  - name: Netease
+    type: select
+    proxies:
+      - DIRECT
+      - Proxies
+  - name: Netflix
+    type: select
+    proxies:
+      - Proxies
+      - HK
+      - SG
+      - JP
+      - US
+      - TW
+      - 🇸🇬 【隧道】新加坡 Netflix
+      - 🇯🇵 【隧道】日本(原生 解锁霓虹本土各网站)
+  - name: HKMTMedia
+    type: select
+    proxies:
+      - DIRECT
+      - Proxies
+      - HK
+      - TW
+  - name: Fallback
+    type: fallback
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - HK
+      - SG
+      - JP
+      - US
+      - TW
+  - name: HK
+    type: select
+    proxies:
+      - 🇭🇰 【隧道】香港 ALL IN ONE
+      - 🇭🇰 【隧道】香港 HKT
+      - 🇭🇰 【隧道】香港GZ HKT
+      - 🇭🇰 【隧道】香港SH 5Mbps
+      - 🇭🇰 【隧道】香港SZ 5Mbps
+      - 🇭🇰 【隧道】香港ZS
+      - 🇭🇰 【隧道】香港ZS HKT
+      - 🇭🇰 【隧道】香港ZSA
+  - name: SG
+    type: select
+    proxies:
+      - 🇸🇬 【隧道】新加坡 Netflix
+      - 🇸🇬 【隧道】新加坡ZS
+  - name: TW
+    type: select
+    proxies:
+      - 🇨🇳 【隧道】台湾
+      - 🇨🇳 【隧道】台湾GZ
+      - 🇨🇳 【隧道】台湾ZS
+  - name: JP
+    type: select
+    proxies:
+      - 🇯🇵 【隧道】日本(Google Scholar)
+      - 🇯🇵 【隧道】日本(原生 解锁霓虹本土各网站)
+      - 🇯🇵 【隧道】日本GZ
+      - 🇯🇵 【隧道】日本ZS
+  - name: US
+    type: select
+    proxies:
+      - 🇺🇲 【隧道】美国
+      - 🇭🇰 【隧道】美国-HK-ZS
+rules:
+ - DOMAIN-SUFFIX,1password.com,DIRECT
+ - DOMAIN-SUFFIX,vultr.com,DIRECT
+ - DOMAIN-SUFFIX,mb3admin.com,DIRECT
+ - DOMAIN-SUFFIX,rixcloud.io,DIRECT
+ - DOMAIN-SUFFIX,tempestapp.io,DIRECT
+ - DOMAIN,mtalk.google.com,DIRECT
+ - DOMAIN,alt1-mtalk.google.com,DIRECT
+ - DOMAIN,alt2-mtalk.google.com,DIRECT
+ - DOMAIN,alt3-mtalk.google.com,DIRECT
+ - DOMAIN,alt4-mtalk.google.com,DIRECT
+ - DOMAIN,alt5-mtalk.google.com,DIRECT
+ - DOMAIN,alt6-mtalk.google.com,DIRECT
+ - DOMAIN,alt7-mtalk.google.com,DIRECT
+ - DOMAIN,alt8-mtalk.google.com,DIRECT
+ - DOMAIN,alt9-mtalk.google.com,DIRECT
+ - DOMAIN,captive.apple.com,DIRECT
+ - DOMAIN,time-ios.apple.com,DIRECT
+ - DOMAIN-SUFFIX,gateway.push-apple.com.akadns.net,DIRECT
+ - DOMAIN-SUFFIX,push.apple.com,DIRECT
+ - DOMAIN-KEYWORD,github,Proxies
+ - DOMAIN-SUFFIX,github.com,Proxies
+ - DOMAIN-SUFFIX,github.io,Proxies
+ - DOMAIN-SUFFIX,githubapp.com,Proxies
+ - DOMAIN-SUFFIX,githubassets.com,Proxies
+ - DOMAIN-SUFFIX,githubusercontent.com,Proxies
+ - DOMAIN-SUFFIX,home-intl.console.aliyun.com,Proxies
+ - DOMAIN,ip.skk.moe,Proxies
+ - DOMAIN,ip.sb,Proxies
+ - DOMAIN-SUFFIX,googleapis.cn,Proxies
+ - DOMAIN-KEYWORD,1drv,MicroSoft
+ - DOMAIN-KEYWORD,microsoft,MicroSoft
+ - DOMAIN-SUFFIX,aadrm.com,MicroSoft
+ - DOMAIN-SUFFIX,acompli.com,MicroSoft
+ - DOMAIN-SUFFIX,acompli.net,MicroSoft
+ - DOMAIN-SUFFIX,aka.ms,MicroSoft
+ - DOMAIN-SUFFIX,akadns.net,MicroSoft
+ - DOMAIN-SUFFIX,aspnetcdn.com,MicroSoft
+ - DOMAIN-SUFFIX,assets-yammer.com,MicroSoft
+ - DOMAIN-SUFFIX,azure.com,MicroSoft
+ - DOMAIN-SUFFIX,azure.net,MicroSoft
+ - DOMAIN-SUFFIX,azureedge.net,MicroSoft
+ - DOMAIN-SUFFIX,azurerms.com,MicroSoft
+ - DOMAIN-SUFFIX,bing.com,MicroSoft
+ - DOMAIN-SUFFIX,cloudapp.net,MicroSoft
+ - DOMAIN-SUFFIX,cloudappsecurity.com,MicroSoft
+ - DOMAIN-SUFFIX,edgesuite.net,MicroSoft
+ - DOMAIN-SUFFIX,gfx.ms,MicroSoft
+ - DOMAIN-SUFFIX,hotmail.com,MicroSoft
+ - DOMAIN-SUFFIX,live.com,MicroSoft
+ - DOMAIN-SUFFIX,live.net,MicroSoft
+ - DOMAIN-SUFFIX,lync.com,MicroSoft
+ - DOMAIN-SUFFIX,msappproxy.net,MicroSoft
+ - DOMAIN-SUFFIX,msauth.net,MicroSoft
+ - DOMAIN-SUFFIX,msauthimages.net,MicroSoft
+ - DOMAIN-SUFFIX,msecnd.net,MicroSoft
+ - DOMAIN-SUFFIX,msedge.net,MicroSoft
+ - DOMAIN-SUFFIX,msft.net,MicroSoft
+ - DOMAIN-SUFFIX,msftauth.net,MicroSoft
+ - DOMAIN-SUFFIX,msftauthimages.net,MicroSoft
+ - DOMAIN-SUFFIX,msftidentity.com,MicroSoft
+ - DOMAIN-SUFFIX,msidentity.com,MicroSoft
+ - DOMAIN-SUFFIX,msn.com,MicroSoft
+ - DOMAIN-SUFFIX,msocdn.com,MicroSoft
+ - DOMAIN-SUFFIX,msocsp.com,MicroSoft
+ - DOMAIN-SUFFIX,mstea.ms,MicroSoft
+ - DOMAIN-SUFFIX,o365weve.com,MicroSoft
+ - DOMAIN-SUFFIX,oaspapps.com,MicroSoft
+ - DOMAIN-SUFFIX,office.com,MicroSoft
+ - DOMAIN-SUFFIX,office.net,MicroSoft
+ - DOMAIN-SUFFIX,office365.com,MicroSoft
+ - DOMAIN-SUFFIX,officeppe.net,MicroSoft
+ - DOMAIN-SUFFIX,omniroot.com,MicroSoft
+ - DOMAIN-SUFFIX,onedrive.com,MicroSoft
+ - DOMAIN-SUFFIX,onenote.com,MicroSoft
+ - DOMAIN-SUFFIX,onenote.net,MicroSoft
+ - DOMAIN-SUFFIX,onestore.ms,MicroSoft
+ - DOMAIN-SUFFIX,outlook.com,MicroSoft
+ - DOMAIN-SUFFIX,outlookmobile.com,MicroSoft
+ - DOMAIN-SUFFIX,phonefactor.net,MicroSoft
+ - DOMAIN-SUFFIX,public-trust.com,MicroSoft
+ - DOMAIN-SUFFIX,sfbassets.com,MicroSoft
+ - DOMAIN-SUFFIX,sfx.ms,MicroSoft
+ - DOMAIN-SUFFIX,sharepoint.com,MicroSoft
+ - DOMAIN-SUFFIX,sharepointonline.com,MicroSoft
+ - DOMAIN-SUFFIX,skype.com,MicroSoft
+ - DOMAIN-SUFFIX,skypeassets.com,MicroSoft
+ - DOMAIN-SUFFIX,skypeforbusiness.com,MicroSoft
+ - DOMAIN-SUFFIX,staffhub.ms,MicroSoft
+ - DOMAIN-SUFFIX,svc.ms,MicroSoft
+ - DOMAIN-SUFFIX,sway-cdn.com,MicroSoft
+ - DOMAIN-SUFFIX,sway-extensions.com,MicroSoft
+ - DOMAIN-SUFFIX,sway.com,MicroSoft
+ - DOMAIN-SUFFIX,trafficmanager.net,MicroSoft
+ - DOMAIN-SUFFIX,uservoice.com,MicroSoft
+ - DOMAIN-SUFFIX,virtualearth.net,MicroSoft
+ - DOMAIN-SUFFIX,visualstudio.com,MicroSoft
+ - DOMAIN-SUFFIX,windows-ppe.net,MicroSoft
+ - DOMAIN-SUFFIX,windows.com,MicroSoft
+ - DOMAIN-SUFFIX,windows.net,MicroSoft
+ - DOMAIN-SUFFIX,windowsazure.com,MicroSoft
+ - DOMAIN-SUFFIX,windowsupdate.com,MicroSoft
+ - DOMAIN-SUFFIX,wunderlist.com,MicroSoft
+ - DOMAIN-SUFFIX,yammer.com,MicroSoft
+ - DOMAIN-SUFFIX,yammerusercontent.com,MicroSoft
+ - DOMAIN-SUFFIX,163yun.com,Netease
+ - DOMAIN-SUFFIX,music.163.com,Netease
+ - DOMAIN-SUFFIX,music.126.net,Netease
+ - DOMAIN-SUFFIX,api.iplay.163.com,Netease
+ - DOMAIN-SUFFIX,apm.music.163.com,Netease
+ - DOMAIN-SUFFIX,apm3.music.163.com,Netease
+ - DOMAIN-SUFFIX,interface.music.163.com,Netease
+ - DOMAIN-SUFFIX,interface3.music.163.com,Netease
+ - DOMAIN-SUFFIX,mam.netease.com,Netease
+ - DOMAIN-SUFFIX,hz.netease.com,Netease
+ - IP-CIDR,39.105.63.80/32,Netease
+ - IP-CIDR,45.254.48.1/32,Netease
+ - IP-CIDR,47.100.127.239/32,Netease
+ - IP-CIDR,59.111.21.14/31,Netease
+ - IP-CIDR,59.111.179.214/32,Netease
+ - IP-CIDR,59.111.181.38/32,Netease
+ - IP-CIDR,59.111.181.60/32,Netease
+ - IP-CIDR,59.111.160.195/32,Netease
+ - IP-CIDR,59.111.160.197/32,Netease
+ - IP-CIDR,59.111.181.35/32,Netease
+ - IP-CIDR,59.111.238.29/32,Netease
+ - IP-CIDR,101.71.154.241/32,Netease
+ - IP-CIDR,103.126.92.132/32,Netease
+ - IP-CIDR,103.126.92.133/32,Netease
+ - IP-CIDR,112.13.119.17/32,Netease
+ - IP-CIDR,112.13.122.1/32,Netease
+ - IP-CIDR,115.236.118.33/32,Netease
+ - IP-CIDR,115.236.121.1/32,Netease
+ - IP-CIDR,118.24.63.156/32,Netease
+ - IP-CIDR,193.112.159.225/32,Netease
+ - IP-CIDR,223.252.199.66/32,Netease
+ - IP-CIDR,223.252.199.67/32,Netease
+ - DOMAIN-SUFFIX,netflix.com,Netflix
+ - DOMAIN-SUFFIX,netflix.net,Netflix
+ - DOMAIN-SUFFIX,nflxext.com,Netflix
+ - DOMAIN-SUFFIX,nflximg.com,Netflix
+ - DOMAIN-SUFFIX,nflximg.net,Netflix
+ - DOMAIN-SUFFIX,nflxso.net,Netflix
+ - DOMAIN-SUFFIX,nflxvideo.net,Netflix
+ - IP-CIDR,108.175.32.0/20,Netflix
+ - IP-CIDR,185.2.220.0/22,Netflix
+ - IP-CIDR,185.9.188.0/22,Netflix
+ - IP-CIDR,192.173.127.0/24,Netflix
+ - IP-CIDR,192.173.64.0/18,Netflix
+ - IP-CIDR,192.173.65.0/24,Netflix
+ - IP-CIDR,192.173.66.0/24,Netflix
+ - IP-CIDR,192.173.67.0/24,Netflix
+ - IP-CIDR,192.173.68.0/24,Netflix
+ - IP-CIDR,192.173.70.0/24,Netflix
+ - IP-CIDR,192.173.72.0/24,Netflix
+ - IP-CIDR,192.173.73.0/24,Netflix
+ - IP-CIDR,192.173.74.0/24,Netflix
+ - IP-CIDR,192.173.76.0/24,Netflix
+ - IP-CIDR,192.173.78.0/24,Netflix
+ - IP-CIDR,192.173.79.0/24,Netflix
+ - IP-CIDR,198.38.108.0/24,Netflix
+ - IP-CIDR,198.38.109.0/24,Netflix
+ - IP-CIDR,198.38.110.0/24,Netflix
+ - IP-CIDR,198.38.111.0/24,Netflix
+ - IP-CIDR,198.38.112.0/24,Netflix
+ - IP-CIDR,198.38.113.0/24,Netflix
+ - IP-CIDR,198.38.114.0/24,Netflix
+ - IP-CIDR,198.38.115.0/24,Netflix
+ - IP-CIDR,198.38.120.0/24,Netflix
+ - IP-CIDR,198.38.121.0/24,Netflix
+ - IP-CIDR,198.38.122.0/24,Netflix
+ - IP-CIDR,198.38.96.0/19,Netflix
+ - IP-CIDR,198.38.98.0/24,Netflix
+ - IP-CIDR,198.38.99.0/24,Netflix
+ - IP-CIDR,198.45.48.0/20,Netflix
+ - IP-CIDR,198.45.48.0/24,Netflix
+ - IP-CIDR,198.45.49.0/24,Netflix
+ - IP-CIDR,198.45.50.0/24,Netflix
+ - IP-CIDR,198.45.56.0/24,Netflix
+ - IP-CIDR,207.45.72.0/22,Netflix
+ - IP-CIDR,207.45.73.0/24,Netflix
+ - IP-CIDR,208.75.76.0/22,Netflix
+ - IP-CIDR,208.75.76.0/24,Netflix
+ - IP-CIDR,23.246.0.0/18,Netflix
+ - IP-CIDR,23.246.10.0/24,Netflix
+ - IP-CIDR,23.246.11.0/24,Netflix
+ - IP-CIDR,23.246.14.0/24,Netflix
+ - IP-CIDR,23.246.15.0/24,Netflix
+ - IP-CIDR,23.246.16.0/24,Netflix
+ - IP-CIDR,23.246.17.0/24,Netflix
+ - IP-CIDR,23.246.2.0/24,Netflix
+ - IP-CIDR,23.246.20.0/24,Netflix
+ - IP-CIDR,23.246.21.0/24,Netflix
+ - IP-CIDR,23.246.26.0/24,Netflix
+ - IP-CIDR,23.246.27.0/24,Netflix
+ - IP-CIDR,23.246.3.0/24,Netflix
+ - IP-CIDR,23.246.30.0/24,Netflix
+ - IP-CIDR,23.246.31.0/24,Netflix
+ - IP-CIDR,23.246.36.0/24,Netflix
+ - IP-CIDR,23.246.38.0/24,Netflix
+ - IP-CIDR,23.246.39.0/24,Netflix
+ - IP-CIDR,23.246.41.0/24,Netflix
+ - IP-CIDR,23.246.42.0/24,Netflix
+ - IP-CIDR,23.246.44.0/24,Netflix
+ - IP-CIDR,23.246.45.0/24,Netflix
+ - IP-CIDR,23.246.46.0/24,Netflix
+ - IP-CIDR,23.246.47.0/24,Netflix
+ - IP-CIDR,23.246.48.0/24,Netflix
+ - IP-CIDR,23.246.49.0/24,Netflix
+ - IP-CIDR,23.246.50.0/24,Netflix
+ - IP-CIDR,23.246.51.0/24,Netflix
+ - IP-CIDR,23.246.52.0/24,Netflix
+ - IP-CIDR,23.246.54.0/24,Netflix
+ - IP-CIDR,23.246.55.0/24,Netflix
+ - IP-CIDR,23.246.56.0/24,Netflix
+ - IP-CIDR,23.246.57.0/24,Netflix
+ - IP-CIDR,23.246.58.0/24,Netflix
+ - IP-CIDR,23.246.59.0/24,Netflix
+ - IP-CIDR,23.246.6.0/24,Netflix
+ - IP-CIDR,23.246.7.0/24,Netflix
+ - IP-CIDR,37.77.184.0/21,Netflix
+ - IP-CIDR,37.77.186.0/24,Netflix
+ - IP-CIDR,37.77.187.0/24,Netflix
+ - IP-CIDR,37.77.188.0/24,Netflix
+ - IP-CIDR,37.77.189.0/24,Netflix
+ - IP-CIDR,45.57.0.0/17,Netflix
+ - IP-CIDR,45.57.0.0/24,Netflix
+ - IP-CIDR,45.57.1.0/24,Netflix
+ - IP-CIDR,45.57.10.0/24,Netflix
+ - IP-CIDR,45.57.100.0/24,Netflix
+ - IP-CIDR,45.57.101.0/24,Netflix
+ - IP-CIDR,45.57.102.0/24,Netflix
+ - IP-CIDR,45.57.103.0/24,Netflix
+ - IP-CIDR,45.57.11.0/24,Netflix
+ - IP-CIDR,45.57.12.0/24,Netflix
+ - IP-CIDR,45.57.13.0/24,Netflix
+ - IP-CIDR,45.57.14.0/24,Netflix
+ - IP-CIDR,45.57.15.0/24,Netflix
+ - IP-CIDR,45.57.16.0/24,Netflix
+ - IP-CIDR,45.57.17.0/24,Netflix
+ - IP-CIDR,45.57.18.0/24,Netflix
+ - IP-CIDR,45.57.19.0/24,Netflix
+ - IP-CIDR,45.57.2.0/24,Netflix
+ - IP-CIDR,45.57.20.0/24,Netflix
+ - IP-CIDR,45.57.21.0/24,Netflix
+ - IP-CIDR,45.57.22.0/24,Netflix
+ - IP-CIDR,45.57.23.0/24,Netflix
+ - IP-CIDR,45.57.28.0/24,Netflix
+ - IP-CIDR,45.57.29.0/24,Netflix
+ - IP-CIDR,45.57.3.0/24,Netflix
+ - IP-CIDR,45.57.32.0/24,Netflix
+ - IP-CIDR,45.57.35.0/24,Netflix
+ - IP-CIDR,45.57.36.0/24,Netflix
+ - IP-CIDR,45.57.37.0/24,Netflix
+ - IP-CIDR,45.57.4.0/24,Netflix
+ - IP-CIDR,45.57.40.0/23,Netflix
+ - IP-CIDR,45.57.40.0/24,Netflix
+ - IP-CIDR,45.57.41.0/24,Netflix
+ - IP-CIDR,45.57.44.0/24,Netflix
+ - IP-CIDR,45.57.45.0/24,Netflix
+ - IP-CIDR,45.57.47.0/24,Netflix
+ - IP-CIDR,45.57.48.0/24,Netflix
+ - IP-CIDR,45.57.49.0/24,Netflix
+ - IP-CIDR,45.57.5.0/24,Netflix
+ - IP-CIDR,45.57.56.0/24,Netflix
+ - IP-CIDR,45.57.58.0/24,Netflix
+ - IP-CIDR,45.57.59.0/24,Netflix
+ - IP-CIDR,45.57.6.0/24,Netflix
+ - IP-CIDR,45.57.60.0/24,Netflix
+ - IP-CIDR,45.57.62.0/24,Netflix
+ - IP-CIDR,45.57.63.0/24,Netflix
+ - IP-CIDR,45.57.64.0/24,Netflix
+ - IP-CIDR,45.57.65.0/24,Netflix
+ - IP-CIDR,45.57.68.0/24,Netflix
+ - IP-CIDR,45.57.69.0/24,Netflix
+ - IP-CIDR,45.57.7.0/24,Netflix
+ - IP-CIDR,45.57.70.0/24,Netflix
+ - IP-CIDR,45.57.71.0/24,Netflix
+ - IP-CIDR,45.57.72.0/24,Netflix
+ - IP-CIDR,45.57.73.0/24,Netflix
+ - IP-CIDR,45.57.74.0/24,Netflix
+ - IP-CIDR,45.57.75.0/24,Netflix
+ - IP-CIDR,45.57.78.0/24,Netflix
+ - IP-CIDR,45.57.79.0/24,Netflix
+ - IP-CIDR,45.57.8.0/23,Netflix
+ - IP-CIDR,45.57.8.0/24,Netflix
+ - IP-CIDR,45.57.80.0/24,Netflix
+ - IP-CIDR,45.57.81.0/24,Netflix
+ - IP-CIDR,45.57.82.0/24,Netflix
+ - IP-CIDR,45.57.83.0/24,Netflix
+ - IP-CIDR,45.57.86.0/23,Netflix
+ - IP-CIDR,45.57.86.0/24,Netflix
+ - IP-CIDR,45.57.88.0/24,Netflix
+ - IP-CIDR,45.57.89.0/24,Netflix
+ - IP-CIDR,45.57.9.0/24,Netflix
+ - IP-CIDR,45.57.90.0/23,Netflix
+ - IP-CIDR,45.57.90.0/24,Netflix
+ - IP-CIDR,45.57.91.0/24,Netflix
+ - IP-CIDR,45.57.95.0/24,Netflix
+ - IP-CIDR,45.57.98.0/24,Netflix
+ - IP-CIDR,45.57.99.0/24,Netflix
+ - IP-CIDR,64.120.128.0/17,Netflix
+ - IP-CIDR,66.197.128.0/17,Netflix
+ - IP-CIDR,69.53.224.0/19,Netflix
+ - IP-CIDR,69.53.225.0/24,Netflix
+ - IP-CIDR,69.53.226.0/24,Netflix
+ - IP-CIDR,69.53.227.0/24,Netflix
+ - IP-CIDR,69.53.228.0/24,Netflix
+ - IP-CIDR,69.53.229.0/24,Netflix
+ - IP-CIDR,69.53.231.0/24,Netflix
+ - IP-CIDR,69.53.233.0/24,Netflix
+ - IP-CIDR,69.53.235.0/24,Netflix
+ - IP-CIDR,69.53.240.0/24,Netflix
+ - IP-CIDR,69.53.241.0/24,Netflix
+ - IP-CIDR,69.53.242.0/24,Netflix
+ - IP-CIDR,69.53.245.0/24,Netflix
+ - IP-CIDR,69.53.246.0/24,Netflix
+ - IP-CIDR,69.53.254.0/24,Netflix
+ - DOMAIN-KEYWORD,qiyi,HKMTMedia
+ - DOMAIN-SUFFIX,qy.net,HKMTMedia
+ - IP-CIDR,101.227.0.0/16,HKMTMedia,no-resolve
+ - IP-CIDR,101.224.0.0/13,HKMTMedia,no-resolve
+ - IP-CIDR,119.176.0.0/12,HKMTMedia,no-resolve
+ - DOMAIN-SUFFIX,acg.tv,HKMTMedia
+ - DOMAIN-SUFFIX,acgvideo.com,HKMTMedia
+ - DOMAIN-SUFFIX,b23.tv,HKMTMedia
+ - DOMAIN-SUFFIX,biliapi.com,HKMTMedia
+ - DOMAIN-SUFFIX,biliapi.net,HKMTMedia
+ - DOMAIN-SUFFIX,bilibili.com,HKMTMedia
+ - DOMAIN-SUFFIX,biligame.com,HKMTMedia
+ - DOMAIN-SUFFIX,biligame.net,HKMTMedia
+ - DOMAIN-SUFFIX,bilivideo.com,HKMTMedia
+ - DOMAIN-SUFFIX,hdslb.com,HKMTMedia
+ - DOMAIN-SUFFIX,im9.com,HKMTMedia
+ - DOMAIN-SUFFIX,smtcdns.net,HKMTMedia
+ - DOMAIN-SUFFIX,bahamut.com.tw,HKMTMedia
+ - DOMAIN-SUFFIX,gamer.com.tw,HKMTMedia
+ - DOMAIN-SUFFIX,hinet.net,HKMTMedia
+ - DOMAIN-SUFFIX,local,DIRECT
+ - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+ - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+ - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+ - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+ - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+ - IP-CIDR6,::1/128,DIRECT,no-resolve
+ - IP-CIDR6,fc00::/7,DIRECT,no-resolve
+ - IP-CIDR6,fe80::/10,DIRECT,no-resolve
+ - IP-CIDR6,fd00::/8,DIRECT,no-resolve
+ - GEOIP,CN,DIRECT
+ - MATCH,Proxies
