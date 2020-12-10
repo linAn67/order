@@ -80,7 +80,7 @@ proxy-groups:
     type: select
     proxies:
       - DIRECT
-      - Proxies
+      - 网易云解锁
   - name: Netflix
     type: select
     proxies:
